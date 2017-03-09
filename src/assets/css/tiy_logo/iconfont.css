@@ -1,10 +1,10 @@
 
 @font-face {font-family: "iconfont";
-  src: url('iconfont.eot?t=1488678404295'); /* IE9*/
-  src: url('iconfont.eot?t=1488678404295#iefix') format('embedded-opentype'), /* IE6-IE8 */
-  url('iconfont.woff?t=1488678404295') format('woff'), /* chrome, firefox */
-  url('iconfont.ttf?t=1488678404295') format('truetype'), /* chrome, firefox, opera, Safari, Android, iOS 4.2+*/
-  url('iconfont.svg?t=1488678404295#iconfont') format('svg'); /* iOS 4.1- */
+  src: url('iconfont.eot?t=1489063702047'); /* IE9*/
+  src: url('iconfont.eot?t=1489063702047#iefix') format('embedded-opentype'), /* IE6-IE8 */
+  url('iconfont.woff?t=1489063702047') format('woff'), /* chrome, firefox */
+  url('iconfont.ttf?t=1489063702047') format('truetype'), /* chrome, firefox, opera, Safari, Android, iOS 4.2+*/
+  url('iconfont.svg?t=1489063702047#iconfont') format('svg'); /* iOS 4.1- */
 }
 
 .iconfont {
@@ -15,9 +15,13 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+.icon-shanchu:before { content: "\e6b0"; }
+
 .icon-xihuan:before { content: "\e669"; }
 
 .icon-yanjing1:before { content: "\e6bc"; }
 
 .icon-sousuo_sousuo:before { content: "\e601"; }
+
+.icon-bianji:before { content: "\e600"; }
 

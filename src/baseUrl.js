@@ -1,0 +1,1 @@
+export var baseUrl =   location.port === '8080' ? 'http://192.168.1.105:9000/' :'//'+document.domain+'/'
