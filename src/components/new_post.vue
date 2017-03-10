@@ -30,7 +30,7 @@
       </header>
       <div class="show_content">
         <section class='content inner_md'>
-          <textarea v-model = 'md_in' resize='none' placeholder="输入文章内容...">
+          <textarea v-model = 'md_in' resize='none' placeholder="输入文章内容..." ref ='mdIn'>
           </textarea>
         </section>
         <section class='content out_html' v-html = 'out_html' v-highlight >
@@ -52,8 +52,8 @@ Vue.use(Highlight)
 
 export default {
   created (){
-    const vm = this
     this.out_html = marked(this.md_in)
+    this.sameScroll()
   },
   data () {
     return {
@@ -97,6 +97,15 @@ export default {
         function(){
         }
       )
+    },
+    sameScroll: function(){
+      let kkk
+      this.$nextTick(function(){
+        const kkk = this.$refs.mdIn
+        kkk.onscroll = function(){
+
+        }
+      })
     },
   },
   watch: {
