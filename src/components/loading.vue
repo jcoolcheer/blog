@@ -53,7 +53,7 @@ div.baseTriangle::after{
   content: '';
   display: block;
   position: absolute;
-  bottom: -17.4px;
+  bottom: -17.5px;
   left: -14px;
   width: 0;
   height: 0;

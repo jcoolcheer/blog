@@ -14,6 +14,9 @@
               <p class='time'>
                 2016-12-01
               </p>
+              <i class='iconfont'>
+                &#xe681
+              </i>
             </li>
             <li>
               <p>
@@ -33,6 +36,13 @@
             </li>
           </ul>
         </div>
+        <p class='addEmotion'>
+          <a href="javascript:;">
+            <i class='iconfont'>
+              &#xe7f7
+            </i>
+          </a>
+        </p>
       </div>
     </div>
   </div>
@@ -118,8 +128,11 @@ export default {
     position: absolute;
     width: 30px;
     height: 30px;
+    line-height: 30px;
+    text-align: center;
     background-color: #fff;
     border-radius: 50%;
+    font-size: 22px;
     left: -43px;
     top: 0;
   }
@@ -140,5 +153,20 @@ export default {
     font-size: 13px;
     color: #4d4f4f;
     opacity: 0.6;
+  }
+  p.addEmotion{
+    text-align: center;
+  }
+  p.addEmotion>a{
+    display: inline-block;
+    padding: 5px 10px;
+    color: #fff;
+  }
+  p.addEmotion>a>i{
+    font-size: 30px;
+    color: #eee;
+  }
+    p.addEmotion>a>i:hover{
+    color: #fff;
   }
 </style>

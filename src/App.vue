@@ -25,7 +25,7 @@
         </header>
         <div class='lists_zone'>
           <ul class='posts_list'>
-            <li v-if='posts' v-for = '(item,index) in posts' @click ='inPost(index,item)' :class='[ index === i ? "des" : "" ]'>
+            <li v-if='posts' v-for = '(item,index) in titles' @click ='inPost(index,item)' :class='[ index === i ? "des" : "" ]'>
               <h4>
               <a href="javascript:;">
                  {{ item.title }}
@@ -71,11 +71,6 @@
                   0
                 </span>
               </span>
-              <span class='editPost'>
-                <i class="iconfont" title='编辑'>
-                &#xe600
-                </i>
-              </span>
             </p>
           </div>
           <div class='title'>
@@ -87,10 +82,10 @@
       </header>
       <article v-html='rawHtml'>
       </article>
-      <footer class='postBtn'>
-        <a class='editPostBtn'>
+      <footer class='postBtn' v-if = 'i != 1'>
+        <router-link class='editPostBtn' tag = 'a' :to = '{ name: "editPost",params: { pID: this.pID } }'>
           EDIT
-        </a>
+        </router-link>
         <a class='deletePostBtn' @click.stop = 'deletePost'>
           {{ deleteReminder }}
         </a>
@@ -119,13 +114,13 @@ export default {
   name: 'app',
   created (){
     this.requestInfo()
-    this.requestPosts()
-
+    this.requesTitles()
   },
   data (){
     return {
       info: null,
       show: true,
+      titles: [],
       posts: [],
       pID: -1,
       title: '漫威电视剧《#异人族#》的前两集剧场版确定于9月1日在 IMAX 院线上映，持续两周。',
@@ -149,13 +144,10 @@ export default {
         this.isLoading = false
       })
     },
-    requestPosts: function(){
-      this.$http.get(baseUrl+'api/v1/article/').then(
+    requesTitles: function(){
+      this.$http.get(baseUrl+'api/v1/title/').then(
         function(data){
-          this.posts = data.body
-          this.imgSrc = this.posts[1].icon
-          this.title = this.posts[1].title
-          this.rawHtml = this.posts[1].content
+          this.titles = data.body
         }
       )
     },
@@ -166,7 +158,8 @@ export default {
     deleting: function(){
       this.$http.delete(baseUrl+'api/v1/article/'+this.pID).then(
         function(){
-          this.posts.splice(this.i,1)
+          this.titles.splice(this.i,1)
+          this.i = -1
         }
       )
     },
@@ -178,9 +171,14 @@ export default {
       this.showPost(i)
     },
     showPost: function(i){
-      this.imgSrc = this.posts[i].icon
-      this.title = this.posts[i].title
-      this.rawHtml = this.posts[i].content
+      this.$http.get(baseUrl+'api/v1/article/'+this.pID).then(
+        function(data){
+          this.desPost = data.body
+          this.imgSrc = this.desPost.icon
+          this.title = this.desPost.title
+          this.rawHtml = this.desPost.content
+        }
+      )
     },
     imageuploaded(res) {
       if (res.errcode == 0) {
@@ -190,7 +188,6 @@ export default {
   },
   watch: {
     'toDelete': function(n,o){
-      console.log(n)
       this.deleteReminder = n === true ? "DELETE" : "SURE"
     }
   }
@@ -321,6 +318,7 @@ export default {
   }
   .content_side{
     width: 50.12%;
+    animation: showPost 0.3s;
   }
   header.info{
     text-align: center;
@@ -607,5 +605,15 @@ export default {
   }
   .deletePostBtn:hover{
     background-color: rgba(244,67,54,1);
+  }
+  @keyframes showPost {
+    0%{
+      transform: scale(0);
+      opacity: 0;
+    }
+    100%{
+      transform: scale(1);
+      opacity: 1;
+    }
   }
 </style>
