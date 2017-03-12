@@ -13,6 +13,11 @@
             清澈高远，大气磅礴
           </p>
         </header>
+        <ul class='tags'>
+          <li v-for ='(item,index) in tags' class = 'ellipsis' @click = 'setTag(item.id,index)' :class='[ t === index ? "des" : "" ]'>
+            {{ item.title }}
+          </li>
+        </ul>
       </section>
       <section class='side list_side'>
         <header class='list clearfix'>
@@ -23,9 +28,16 @@
             <input type="text" name="search_blog" class='search_blog_input' placeholder="SEARCH POSTS HERE">
           </div>
         </header>
+
         <div class='lists_zone'>
-          <ul class='posts_list'>
-            <li v-if='posts' v-for = '(item,index) in titles' @click ='inPost(index,item)' :class='[ index === i ? "des" : "" ]'>
+          <transition-group class='posts_list list-complete' tag = 'ul'>
+            <li key = 'loading' v-if = 'loadingList' class = 'loadingList'>
+              <div class="spinner">
+                <div class="double-bounce1"></div>
+                <div class="double-bounce2"></div>
+              </div>
+            </li>
+            <li v-if='titles && !loadingList'  v-for = '(item,index) in titles' @click ='inPost(index,item)' :class='[ index === i ? "des" : "" ,"list-complete-item"]' :key = 'item'>
               <h4>
               <a href="javascript:;">
                  {{ item.title }}
@@ -35,7 +47,7 @@
                 Posted at {{ item.release_time || "2017-06-22" }}
               </p>
             </li>
-          </ul>
+          </transition-group>
           <div class='new_post'>
             <div class='mask bottom'>
             </div>
@@ -82,11 +94,11 @@
       </header>
       <article v-html='rawHtml'>
       </article>
-      <footer class='postBtn' v-if = 'i != 1'>
-        <router-link class='editPostBtn' tag = 'a' :to = '{ name: "editPost",params: { pID: this.pID } }'>
+      <footer class='generalBtnWrap post' >
+        <router-link class='generalBtn positiveBtn' tag = 'a' :to = '{ name: "editPost",params: { pID: this.pID } }'>
           EDIT
         </router-link>
-        <a class='deletePostBtn' @click.stop = 'deletePost'>
+        <a class='generalBtn negativeBtn' @click.stop = 'deletePost'>
           {{ deleteReminder }}
         </a>
       </footer>
@@ -115,13 +127,18 @@ export default {
   created (){
     this.requestInfo()
     this.requesTitles()
+    this.requesTags()
+  },
+  activated (){
+    alert(2)
   },
   data (){
     return {
       info: null,
       show: true,
       titles: [],
-      posts: [],
+      t: -1,
+      tags: [],
       pID: -1,
       title: '漫威电视剧《#异人族#》的前两集剧场版确定于9月1日在 IMAX 院线上映，持续两周。',
       i: -1,
@@ -130,7 +147,8 @@ export default {
       src: 'http://img1.vued.vanthink.cn/vued0a233185b6027244f9d43e653227439a.png',
       isLoading: true,
       deleteReminder: 'DELETE',
-      toDelete: true
+      toDelete: true,
+      loadingList: true
     }
   },
   components: {
@@ -144,10 +162,31 @@ export default {
         this.isLoading = false
       })
     },
+    beforeRouterEnter: function(){
+      //
+    },
     requesTitles: function(){
       this.$http.get(baseUrl+'api/v1/title/').then(
         function(data){
           this.titles = data.body
+          this.loadingList = false
+        }
+      )
+    },
+    requesTags: function(){
+      this.$http.get(baseUrl+'api/v1/tag/').then(
+        function(data){
+          this.tags = data.body
+        }
+      )
+    },
+    setTag: function(id,index){
+      this.t = index
+      this.loadingList = true
+      this.$http.get(baseUrl+'api/v1/title/'+id).then(
+        function(data){
+          this.titles = data.body
+          this.loadingList = false
         }
       )
     },
@@ -167,7 +206,7 @@ export default {
       this.i = i
       this.toDelete = true
       this.pID = item.id
-      history.pushState({},'','/#/'+i)
+      history.pushState({},'','/#/'+this.pID)
       this.showPost(i)
     },
     showPost: function(i){
@@ -242,11 +281,12 @@ export default {
     padding: 15px;
     line-height: 2;
     background-color: #f5f5f6;
-    border-left: 6px solid #4d4f4f;
-    color: #4d4f4f;
+    border-left: 6px solid #41444a;
+    color: #41444a;
   }
-  blockquote p,.general p{
+  article blockquote p,.general p{
     line-height: 2;
+    margin-bottom: 0;
   }
   .clearfix::after{
     content: '';
@@ -311,7 +351,7 @@ export default {
 
   .info_side{
     width: 16.66%;
-    background-color: #4d4f4f;
+    background-color: #41444a;
   }
   .list_side{
     width: 33.22%;
@@ -341,22 +381,6 @@ export default {
   .user_headimg:hover{
     animation: remind 0.3s ease-out;
   }
-/*  @keyframes remind{
-    0%{
-      transform: scale(1);
-    }
-
-    40%{
-      transform: scale(1.05);
-    }
-    80%{
-      transform: scale(0.9);
-    }
-    100%{
-      transform: scale(1);
-    }
-  }*/
-
   .blogger_name{
     font-size: 20px;
     color: #efefef;
@@ -371,6 +395,27 @@ export default {
     line-height: 40px;
     color: #aaa;
   }
+  ul.tags{
+    margin: 0 auto;
+    max-height: calc( 100% - 250px );
+    overflow: auto;
+  }
+  ul.tags li{
+    color: #888;
+    padding: 0 10px;
+    margin-bottom: 10px;
+    text-align: center;
+    font-size: 13px;
+    line-height: 2.3;
+    cursor: pointer;
+  }
+  ul.tags li:hover{
+    color: #ddd;
+  }
+  ul.tags li.des{
+    background-color: #4e5259;
+    color: #fff;
+  }
   /*info_side css*/
 
   /*list_side_css*/
@@ -378,10 +423,10 @@ export default {
     border-right: 1px solid #e5e5e6;
   }
   header.list{
-    height: 65px;
-    line-height: 65px;
+    height: 55px;
+    line-height: 55px;
     background-color: #f5f5f6;
-    color: #4d4f4f;
+    color: #41444a;
   }
   header.list>i{
     float: left;
@@ -392,6 +437,7 @@ export default {
     display: block;
     height: 100%;
     font-size: 20px;
+    color: #888;
   }
   header.list>div{
     margin-left: 80px;
@@ -399,16 +445,16 @@ export default {
   }
   input.search_blog_input{
     width: 100%;
-    height: 65px;
+    height: 55px;
     border: none;
     outline: none;
     background-color: #f5f5f6;
-    color: #4d4f4f;
+    color: #41444a;
     font-size: 14px;
   }
   .lists_zone{
     padding: 10px 25px;
-    height: calc(100% - 65px );
+    height: calc(100% - 55px );
   }
   .lists_zone>p{
     line-height: 50px;
@@ -428,6 +474,19 @@ export default {
     border-bottom: 1px solid #f5f5f6;
     cursor: pointer;
   }
+  .posts_list li.loadingList{
+    border-bottom: none;
+  }
+  .list-complete-item {
+    transition: all 0.3s;
+  }
+  .list-complete-enter, .list-complete-leave-active {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  .list-complete-leave-active {
+    position: absolute;
+  }
   .posts_list li:first-child{
     margin-top: 0;
   }
@@ -438,7 +497,7 @@ export default {
     color: #3d3f3f;
   }
   .posts_list li a{
-    color: #4d4f4f;
+    color: #41444a;
   }
   .posts_list li>p{
     font-size: 13px;
@@ -475,14 +534,14 @@ export default {
     border-radius: 3px;
     font-size: 13px;
     font-weight: bold;
-    background-color: rgba(112,161,159,0.8);
+    background-color: rgba(143,160,164,0.8);
     color: #fff;
     position: relative;
     z-index: 2;
     transition: all 0.3s;
   }
   .new_post a:hover{
-    background-color: rgba(112,161,159,1);
+    background-color: rgba(143,160,164,1);
     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.38);
   }
   /*list_side_css*/
@@ -559,8 +618,10 @@ export default {
     line-height: 1.8;
   }
 
-  footer.postBtn{
+  .generalBtnWrap{
     text-align: center;
+  }
+  .generalBtnWrap.post{
     display: none;
     animation: showPostBtn 0.3s;
   }
@@ -574,14 +635,15 @@ export default {
       transform: scale(1);
     }
   }
-  section.content_side:hover footer.postBtn{
+  section.content_side:hover footer.generalBtnWrap{
     display: block;
   }
-  footer.postBtn>a{
+  .generalBtn{
     display: inline-block;
     width: 200px;
     height: 40px;
     line-height: 40px;
+    text-align: center;
     margin: 0 20px;
     color: #fff;
     border-radius: 3px;
@@ -591,19 +653,20 @@ export default {
     box-shadow: none;
     position: relative;
   }
-  .editPostBtn{
-    background: rgba(77,79,79,0.8);
-  }
-  .deletePostBtn{
-    background: rgba(244,67,54,0.8);
-  }
-  footer.postBtn>a:hover{
+  .generalBtn:hover{
     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.38);
   }
-  .editPostBtn:hover{
+  .positiveBtn{
+    background: rgba(77,79,79,0.8);
+  }
+  .negativeBtn{
+    background: rgba(244,67,54,0.8);
+  }
+
+  .positiveBtn:hover{
     background-color: rgba(77,79,79,1);
   }
-  .deletePostBtn:hover{
+  .negativeBtn:hover{
     background-color: rgba(244,67,54,1);
   }
   @keyframes showPost {
@@ -615,5 +678,35 @@ export default {
       transform: scale(1);
       opacity: 1;
     }
+  }
+
+  .spinner {
+    width: 60px;
+    height: 60px;
+    position: relative;
+    margin: 30px auto;
+  }
+
+  .double-bounce1, .double-bounce2 {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: #41444a;
+    opacity: 0.6;
+    position: absolute;
+    top: 0;
+    left: 0;
+    -webkit-animation: bounce 2.0s infinite ease-in-out;
+    animation: bounce 2.0s infinite ease-in-out;
+  }
+
+  .double-bounce2 {
+    -webkit-animation-delay: -1.0s;
+    animation-delay: -1.0s;
+  }
+
+  @-webkit-keyframes bounce {
+    0%, 100% { -webkit-transform: scale(0.0) }
+    50% { -webkit-transform: scale(1.0) }
   }
 </style>

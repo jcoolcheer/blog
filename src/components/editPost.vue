@@ -52,6 +52,7 @@ Vue.use(Highlight)
 
 export default {
   created (){
+    alert(1)
     this.getPost()
     this.sameScroll()
   },
@@ -73,6 +74,7 @@ export default {
     getPost: function(){
       this.$http.get(baseUrl+'api/v1/article/'+this.pID).then(
         function(data){
+          console.log(data.body)
           this.title = data.body.title
           this.md_in = data.body.content
           this.out_html = marked(this.md_in)

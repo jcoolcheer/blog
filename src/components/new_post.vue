@@ -55,6 +55,11 @@ export default {
     this.out_html = marked(this.md_in)
     this.sameScroll()
   },
+  beforeRouteEnter(to,from,next){
+    next(vm => {
+      console.log(vm)
+    })
+  },
   data () {
     return {
       md_in: localStorage.postTemp || '' ,
