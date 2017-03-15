@@ -102,7 +102,7 @@
           {{ deleteReminder }}
         </a>
       </footer>
-
+      <div id="uyan_frame"></div>
       </section>
     </div>
     <div class='features'>
@@ -469,9 +469,10 @@ export default {
     overflow: auto;
   }
   .posts_list li{
-    padding: 5px;
-    margin: 15px 0;
+    padding: 10px;
+    margin: 10px 0;
     border-bottom: 1px solid #f5f5f6;
+    border-radius: 3px;
     cursor: pointer;
   }
   .posts_list li.loadingList{
@@ -491,10 +492,7 @@ export default {
     margin-top: 0;
   }
   .posts_list li.des{
-    background: #f5f5f6;
-  }
-  .posts_list li>h4{
-    color: #3d3f3f;
+    background: rgba(65,68,74,0.1);
   }
   .posts_list li a{
     color: #41444a;
@@ -708,5 +706,8 @@ export default {
   @-webkit-keyframes bounce {
     0%, 100% { -webkit-transform: scale(0.0) }
     50% { -webkit-transform: scale(1.0) }
+  }
+  .uyanpost .postwrap .postaction{
+    background-color: yellow!important;
   }
 </style>

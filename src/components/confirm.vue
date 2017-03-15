@@ -1,27 +1,27 @@
 <template lang="html">
-  <transition name='showConfirm'>
-    <div class="confirm box-shadow">
-        <div class="exitConfim">
-          <header>
-            <slot name='confirmTitle'>
+    <transition name='showConfirm'>
+      <div class="confirm box-shadow">
+          <div class="exitConfim">
+            <header>
+              <slot name='confirmTitle'>
 
-            </slot>
-            <slot name='warning'>
+              </slot>
+              <slot name='warning'>
 
-            </slot>
-          </header>
-          <div class="confirmBtn" >
+              </slot>
+            </header>
+            <div class="confirmBtn" >
 
-            <slot  name='positiveBtn' >
+              <slot name='positiveBtn' >
 
-            </slot>
-            <slot name='negativeBtn'>
+              </slot>
+              <slot name='negativeBtn' >
 
-            </slot>
+              </slot>
+            </div>
           </div>
-        </div>
-    </div>
-  </transition>
+      </div>
+    </transition>
 </template>
 
 <script>
@@ -33,8 +33,7 @@ export default {
   .confirm{
     position: fixed;
     width: 600px;
-    background-color: #4d4f4f;
-    color: #fff;
+    background-color: #fff;
     border-radius:  0 0 3px 3px;
     padding: 15px;
     left: 50%;
@@ -45,7 +44,7 @@ export default {
     animation: showConfirm 0.2s ease-out;
   }
   .showConfirm-leave-active{
-    animation: noneConfirm 0.5s ease-out;
+    animation: noneConfirm 0.3s ease-out;
   }
   @keyframes showConfirm {
     0%{
@@ -83,18 +82,10 @@ export default {
   }
   .confirmBtn a{
     display: inline-block;
-    line-height: 1;
-    padding: 5px 15px;
     border-radius: 3px;
     font-size: 13px;
     margin: 0 20px;
     color: #fff;
   }
-  .confirmBtn a:first-child{
-    background-color: #00D998;
 
-  }
-  .confirmBtn a:last-child{
-    background-color: #888;
-  }
 </style>

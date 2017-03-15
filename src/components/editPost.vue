@@ -1,19 +1,22 @@
 <template lang="html">
   <div class="newPost" :style='{backgroundColor: color}' @click.stop = 'showConfirm = false'>
-      <confirmPanel v-if='showConfirm' @click.stop>
+
+    <modal v-if ='showConfirm'>
+      <confirmPanel @click.stop slot = 'modalContent'>
         <h3 slot ='confirmTitle'>
           是否保存草稿？
         </h3>
         <p slot = 'warning'>
           您还没有发布修改后的文章
         </p>
-        <a href="javascript:;" slot = 'positiveBtn' @click = 'saveAs'>
+        <a href="javascript:;" slot = 'positiveBtn' @click = 'saveAs' class='generalBtn positiveBtn'>
           确认
         </a>
-        <a href="javascript:;" slot = 'negativeBtn' @click = 'noSave'>
+        <a href="javascript:;" slot = 'negativeBtn' @click = 'noSave' class='generalBtn negativeBtn'>
           取消
         </a>
       </confirmPanel>
+    </modal>
 
     <div class="edit_zone">
       <header>
@@ -45,6 +48,7 @@
 import Vue from 'vue'
 import marked from 'marked'
 import confirmPanel from './confirm'
+import modal from './modal'
 import Highlight from '../highlight.js'
 import { baseUrl } from '../baseUrl'
 
@@ -52,7 +56,6 @@ Vue.use(Highlight)
 
 export default {
   created (){
-    alert(1)
     this.getPost()
     this.sameScroll()
   },
@@ -68,7 +71,8 @@ export default {
     }
   },
   components:{
-    confirmPanel
+    confirmPanel,
+    modal
   },
   methods: {
     getPost: function(){
