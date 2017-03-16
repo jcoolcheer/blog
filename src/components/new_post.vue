@@ -98,7 +98,7 @@ export default {
       }
       const obj = JSON.stringify({
         title: this.title,
-        content: this.out_html
+        content: this.md_in
       })
       this.$http.post(baseUrl+'api/v1/article/',obj).then(
         function(){

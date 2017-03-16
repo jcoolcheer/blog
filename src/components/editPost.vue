@@ -78,7 +78,6 @@ export default {
     getPost: function(){
       this.$http.get(baseUrl+'api/v1/article/'+this.pID).then(
         function(data){
-          console.log(data.body)
           this.title = data.body.title
           this.md_in = data.body.content
           this.out_html = marked(this.md_in)
@@ -105,7 +104,7 @@ export default {
       }
       const obj = JSON.stringify({
         title: this.title,
-        content: this.out_html
+        content: this.md_in
       })
       this.$http.patch(baseUrl+'api/v1/article/'+this.pID,obj).then(
         function(){

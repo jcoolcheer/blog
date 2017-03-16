@@ -29,15 +29,16 @@
           </div>
         </header>
 
-        <div class='lists_zone'>
-          <transition-group class='posts_list list-complete' tag = 'ul'>
+        <div class='lists_zone' >
+          <ul class='posts_list list-complete' >
+          <!-- <transition-group class='posts_list list-complete' tag = 'ul'> -->
             <li key = 'loading' v-if = 'loadingList' class = 'loadingList'>
               <div class="spinner">
                 <div class="double-bounce1"></div>
                 <div class="double-bounce2"></div>
               </div>
             </li>
-            <li v-if='titles && !loadingList'  v-for = '(item,index) in titles' @click ='inPost(index,item)' :class='[ index === i ? "des" : "" ,"list-complete-item"]' :key = 'item'>
+            <li v-if='titles.length && !loadingList'  v-for = '(item,index) in titles' @click ='inPost(index,item)' :class='[ index === i ? "des" : "" ,"list-complete-item"]' :key = 'item'>
               <h4>
               <a href="javascript:;">
                  {{ item.title }}
@@ -47,7 +48,12 @@
                 Posted at {{ item.release_time || "2017-06-22" }}
               </p>
             </li>
-          </transition-group>
+            <li v-if = '!titles.length && !loadingList' key = 'blank' class='noPost'>
+              <blankPost >
+              </blankPost>
+            </li>
+          <!-- </transition-group> -->
+          </ul>
           <div class='new_post'>
             <div class='mask bottom'>
             </div>
@@ -58,51 +64,57 @@
         </div>
       </section>
       <section class='side content_side'>
-      <header class='blog'>
-        <div class='img_bg blog_img box-shadow' v-if='imgSrc.length >= 10' v-bind:style='{ backgroundImage: "url("+imgSrc+")" }'>
+        <transition name = 'postShow'>
+          <div class="hasPost" v-if = 'titles.length && !loadingList && !tempBlank'>
+            <header class='blog'>
+              <div class='img_bg blog_img box-shadow' v-if='imgSrc.length >= 10' v-bind:style='{ backgroundImage: "url("+imgSrc+")" }'>
 
-        </div>
-        <div class='img_bg blog_img box-shadow' v-if='imgSrc.length < 10' style='backgroundImage: url(https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1489125503481&di=fe96dbb3122030a646e09e4b35382387&imgtype=0&src=http%3A%2F%2Fifanr-cdn.b0.upaiyun.com%2Fwp-content%2Fuploads%2F2016%2F07%2FBojack-Horseman-Season-3-1024x576.jpg)'>
-        </div>
-        <div class='blog_info'>
-          <div class='likes'>
-            <p class='clearfix'>
-              <span>
-                <i class="iconfont info">
-                  &#xe6bc
-                </i>
-                <span class="count info">
-                  0
-                </span>
-              </span>
-              <span>
-                <i class="iconfont info">
-                  &#xe669
-                </i>
-                <span class="count info">
-                  0
-                </span>
-              </span>
-            </p>
+              </div>
+              <div class='img_bg blog_img box-shadow' v-if='imgSrc.length < 10' style='backgroundImage: url(https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1489125503481&di=fe96dbb3122030a646e09e4b35382387&imgtype=0&src=http%3A%2F%2Fifanr-cdn.b0.upaiyun.com%2Fwp-content%2Fuploads%2F2016%2F07%2FBojack-Horseman-Season-3-1024x576.jpg)'>
+              </div>
+              <div class='blog_info'>
+                <div class='likes'>
+                  <p class='clearfix'>
+                    <span>
+                      <i class="iconfont info">
+                        &#xe6bc
+                      </i>
+                      <span class="count info">
+                        0
+                      </span>
+                    </span>
+                    <span>
+                      <i class="iconfont info">
+                        &#xe669
+                      </i>
+                      <span class="count info">
+                        0
+                      </span>
+                    </span>
+                  </p>
+                </div>
+                <div class='title'>
+                  <h1 class='blog_title'>
+                    {{ title }} ​​​​
+                  </h1>
+                </div>
+              </div>
+            </header>
+            <article v-html='rawHtml'>
+            </article>
+            <footer class='generalBtnWrap post' >
+              <router-link class='generalBtn positiveBtn' tag = 'a' :to = '{ name: "editPost",params: { pID: this.pID } }'>
+                EDIT
+              </router-link>
+              <a class='generalBtn negativeBtn' @click.stop = 'deletePost'>
+                {{ deleteReminder }}
+              </a>
+            </footer>
+            <div id="uyan_frame"></div>
           </div>
-          <div class='title'>
-            <h1 class='blog_title'>
-              {{ title }} ​​​​
-            </h1>
-          </div>
-        </div>
-      </header>
-      <article v-html='rawHtml'>
-      </article>
-      <footer class='generalBtnWrap post' >
-        <router-link class='generalBtn positiveBtn' tag = 'a' :to = '{ name: "editPost",params: { pID: this.pID } }'>
-          EDIT
-        </router-link>
-        <a class='generalBtn negativeBtn' @click.stop = 'deletePost'>
-          {{ deleteReminder }}
-        </a>
-      </footer>
-      <div id="uyan_frame"></div>
+        </transition>
+        <noContent v-if = '(!titles.length && !loadingList) || tempBlank'>
+        </noContent>
       </section>
     </div>
     <div class='features'>
@@ -117,10 +129,12 @@
 import Vue from 'vue'
 import vueResource from 'vue-resource'
 import { baseUrl } from './baseUrl'
+import marked from 'marked'
 import VueCoreImageUpload  from 'vue-core-image-upload'
 import loading from './components/loading'
 import emotion from './components/emotion'
-
+import blankPost from './components/blankPost'
+import noContent from './components/noContent'
 Vue.use(vueResource)
 export default {
   name: 'app',
@@ -130,7 +144,7 @@ export default {
     this.requesTags()
   },
   activated (){
-    alert(2)
+    // alert(2)
   },
   data (){
     return {
@@ -140,7 +154,7 @@ export default {
       t: -1,
       tags: [],
       pID: -1,
-      title: '漫威电视剧《#异人族#》的前两集剧场版确定于9月1日在 IMAX 院线上映，持续两周。',
+      title: '',
       i: -1,
       rawHtml: '',
       imgSrc: '',
@@ -148,12 +162,15 @@ export default {
       isLoading: true,
       deleteReminder: 'DELETE',
       toDelete: true,
-      loadingList: true
+      loadingList: true,
+      tempBlank: false
     }
   },
   components: {
     VueCoreImageUpload,
-    loading
+    loading,
+    blankPost,
+    noContent
   },
   methods: {
     requestInfo: function(){
@@ -168,10 +185,16 @@ export default {
     requesTitles: function(){
       this.$http.get(baseUrl+'api/v1/title/').then(
         function(data){
-          this.titles = data.body
+          this.titles = typeof(data.body) === 'string' ? JSON.parse(data.body) : data.body
           this.loadingList = false
+          this.titles.length && this.init()
         }
       )
+    },
+    init: function(){
+      this.pID = this.titles[0].id
+      this.showPost()
+      this.i = 0
     },
     requesTags: function(){
       this.$http.get(baseUrl+'api/v1/tag/').then(
@@ -187,6 +210,7 @@ export default {
         function(data){
           this.titles = data.body
           this.loadingList = false
+          this.i = -1
         }
       )
     },
@@ -199,8 +223,15 @@ export default {
         function(){
           this.titles.splice(this.i,1)
           this.i = -1
+          this.tempBlank = true
+          this.clearContent()
         }
       )
+    },
+    clearContent: function(){
+      this.title = ''
+      this.imgSrc = ''
+      this.rawHtml = ''
     },
     inPost: function(i,item){
       this.i = i
@@ -209,13 +240,14 @@ export default {
       history.pushState({},'','/#/'+this.pID)
       this.showPost(i)
     },
-    showPost: function(i){
+    showPost: function(){
       this.$http.get(baseUrl+'api/v1/article/'+this.pID).then(
         function(data){
+          this.tempBlank = false
           this.desPost = data.body
           this.imgSrc = this.desPost.icon
           this.title = this.desPost.title
-          this.rawHtml = this.desPost.content
+          this.rawHtml = marked(this.desPost.content)
         }
       )
     },
@@ -475,9 +507,12 @@ export default {
     border-radius: 3px;
     cursor: pointer;
   }
-  .posts_list li.loadingList{
+  .posts_list li.loadingList,.posts_list li.noPost{
     border-bottom: none;
+    cursor: default;
+    transition: all 0.2s;
   }
+
   .list-complete-item {
     transition: all 0.3s;
   }
@@ -546,8 +581,34 @@ export default {
 
 
   /*content_side_css*/
+  .postShow-enter-active{
+    animation: postShow 0.1s ease-out;
+  }
+  .postShow-leave-active{
+    animation: postHide 0.1s ease-out;
+  }
+  @keyframes postShow{
+    0%{
+      transform: scale(0);
+    }
+    100%{
+      transform: scale(1);
+    }
+  }
+  @keyframes postHide{
+    0%{
+      transform: scale(1);
+    }
+    100%{
+      transform: scale(0);
+    }
+  }
+  .content_side>div.hasPost{
+    height: 100%;
+  }
   header.blog{
     position: relative;
+    overflow: hidden;
   }
 
   .blog_info{
@@ -563,6 +624,10 @@ export default {
     background-size: cover;
     background-position: center;
     height: 220px;
+    transition: all 0.2s;
+  }
+  header.blog:hover .blog_img{
+    transform: scale(1.3);
   }
   .likes{
     color: #fff;
@@ -610,11 +675,62 @@ export default {
   }
   article{
     padding: 20px 30px;
+    font-size: 15px;
   }
   article p{
     margin-bottom: 20px;
     line-height: 1.8;
   }
+  article img:first-child{
+    display: none;
+  }
+  article ul:first-child{
+    margin-top: 5px;
+    text-align: center;
+    position: relative;
+  }
+
+  article ul:first-child li{
+    display: inline-block;
+    padding: 3px 20px;
+    border-radius: 30px;
+    font-size: 13px;
+    margin: 0 10px 15px 0;
+    background-color: #f5f5f6;
+    border: 1px solid #eee;
+    opacity: 0.9;
+  }
+
+  /*article ul:first-child li:nth-child(n){
+    background-color: #04c478;
+  }
+  article ul:first-child li:nth-child(2n){
+    background-color: #0474c8;
+  }
+  article ul:first-child li:nth-child(3n){
+    background-color: #e65097;
+  }
+  article ul:first-child li:nth-child(4n){
+    background-color: #ff7800;
+  }
+  article ul:first-child li:nth-child(5n){
+    background-color: #4d4f4f;
+  }*/
+  /*article ul:first-child li:nth-child(n){
+    color: #04c478;
+  }
+  article ul:first-child li:nth-child(2n){
+    color: #0474c8;
+  }
+  article ul:first-child li:nth-child(3n){
+    color: #e65097;
+  }
+  article ul:first-child li:nth-child(4n){
+    color: #ff7800;
+  }
+  article ul:first-child li:nth-child(5n){
+    color: #4d4f4f;
+  }*/
 
   .generalBtnWrap{
     text-align: center;
