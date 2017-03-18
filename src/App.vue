@@ -5,7 +5,7 @@
     <div class='blog_wraper clearfix' v-if='info'>
       <section class='side info_side box-shadow'>
         <header class='info'>
-          <router-link class = 'img_bg user_headimg' tag = 'div' to='/emotion'>
+          <router-link class = 'img_bg user_headimg' tag = 'div' to='/emotion' >
           </router-link>
           <input class='ellipsis blogger_name' type='text' v-model='info.name'>
           </input>
@@ -130,11 +130,11 @@ import Vue from 'vue'
 import vueResource from 'vue-resource'
 import { baseUrl } from './baseUrl'
 import marked from 'marked'
-import VueCoreImageUpload  from 'vue-core-image-upload'
 import loading from './components/loading'
 import emotion from './components/emotion'
 import blankPost from './components/blankPost'
 import noContent from './components/noContent'
+import gif from './assets/emo.gif'
 Vue.use(vueResource)
 export default {
   name: 'app',
@@ -142,6 +142,7 @@ export default {
     this.requestInfo()
     this.requesTitles()
     this.requesTags()
+
   },
   activated (){
     // alert(2)
@@ -163,11 +164,11 @@ export default {
       deleteReminder: 'DELETE',
       toDelete: true,
       loadingList: true,
-      tempBlank: false
+      tempBlank: false,
+      gif
     }
   },
   components: {
-    VueCoreImageUpload,
     loading,
     blankPost,
     noContent
@@ -175,7 +176,8 @@ export default {
   methods: {
     requestInfo: function(){
       this.$http.get(baseUrl+'api/v1/user/1').then(function(data){
-        this.info = data.body
+        this.info = typeof(data.body) === 'string' ? JSON.stringify(data.body) : data.body
+        this.$store.state.info = this.info
         this.isLoading = false
       })
     },
@@ -185,7 +187,9 @@ export default {
     requesTitles: function(){
       this.$http.get(baseUrl+'api/v1/title/').then(
         function(data){
-          this.titles = typeof(data.body) === 'string' ? JSON.parse(data.body) : data.body
+          const titles = typeof(data.body) === 'string' ? JSON.parse(data.body) : data.body
+          this.$store.commit('addTitle',titles)
+          this.titles = this.$store.state.titles
           this.loadingList = false
           this.titles.length && this.init()
         }
@@ -251,11 +255,6 @@ export default {
         }
       )
     },
-    imageuploaded(res) {
-      if (res.errcode == 0) {
-        this.src = 'http://img1.vued.vanthink.cn/vued751d13a9cb5376b89cb6719e86f591f3.png';
-      }
-    }
   },
   watch: {
     'toDelete': function(n,o){
@@ -313,8 +312,8 @@ export default {
     padding: 15px;
     line-height: 2;
     background-color: #f5f5f6;
-    border-left: 6px solid #41444a;
-    color: #41444a;
+    border-left: 6px solid #4d4f4f;
+    color: #4d4f4f;
   }
   article blockquote p,.general p{
     line-height: 2;
@@ -383,7 +382,7 @@ export default {
 
   .info_side{
     width: 16.66%;
-    background-color: #41444a;
+    background-color: #4d4f4f;
   }
   .list_side{
     width: 33.22%;
@@ -403,6 +402,8 @@ export default {
     border: 4px solid #858585;
     cursor: pointer;
     background-image: url(http://tva3.sinaimg.cn/crop.0.0.748.748.180/6b111555jw8f1wsw89wrkj20ks0ksgmw.jpg);
+    background-size: cover;
+    background-position: center;
     margin: 40px auto;
     margin-bottom: 10px;
     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.33);
@@ -410,6 +411,7 @@ export default {
     overflow: hidden;
     z-index: 2;
   }
+
   .user_headimg:hover{
     animation: remind 0.3s ease-out;
   }
@@ -455,10 +457,10 @@ export default {
     border-right: 1px solid #e5e5e6;
   }
   header.list{
-    height: 55px;
-    line-height: 55px;
+    height: 50px;
+    line-height: 50px;
     background-color: #f5f5f6;
-    color: #41444a;
+    color: #4d4f4f;
   }
   header.list>i{
     float: left;
@@ -477,16 +479,16 @@ export default {
   }
   input.search_blog_input{
     width: 100%;
-    height: 55px;
+    height: 50px;
     border: none;
     outline: none;
     background-color: #f5f5f6;
-    color: #41444a;
+    color: #4d4f4f;
     font-size: 14px;
   }
   .lists_zone{
-    padding: 10px 25px;
-    height: calc(100% - 55px );
+    padding: 10px 0;
+    height: calc(100% - 50px );
   }
   .lists_zone>p{
     line-height: 50px;
@@ -501,36 +503,25 @@ export default {
     overflow: auto;
   }
   .posts_list li{
-    padding: 10px;
+    padding: 10px 50px;
     margin: 10px 0;
     border-bottom: 1px solid #f5f5f6;
     border-radius: 3px;
     cursor: pointer;
+    position: relative;
   }
-  .posts_list li.loadingList,.posts_list li.noPost{
+  .posts_list li.loadingList{
     border-bottom: none;
-    cursor: default;
-    transition: all 0.2s;
-  }
-
-  .list-complete-item {
-    transition: all 0.3s;
-  }
-  .list-complete-enter, .list-complete-leave-active {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  .list-complete-leave-active {
-    position: absolute;
   }
   .posts_list li:first-child{
     margin-top: 0;
   }
-  .posts_list li.des{
-    background: rgba(65,68,74,0.1);
+
+  .posts_list li>h4{
+    font-size: 15px;
   }
   .posts_list li a{
-    color: #41444a;
+    color: #4d4f4f;
   }
   .posts_list li>p{
     font-size: 13px;
@@ -685,9 +676,7 @@ export default {
     display: none;
   }
   article ul:first-child{
-    margin-top: 5px;
-    text-align: center;
-    position: relative;
+    display: none;
   }
 
   article ul:first-child li{
@@ -700,38 +689,6 @@ export default {
     border: 1px solid #eee;
     opacity: 0.9;
   }
-
-  /*article ul:first-child li:nth-child(n){
-    background-color: #04c478;
-  }
-  article ul:first-child li:nth-child(2n){
-    background-color: #0474c8;
-  }
-  article ul:first-child li:nth-child(3n){
-    background-color: #e65097;
-  }
-  article ul:first-child li:nth-child(4n){
-    background-color: #ff7800;
-  }
-  article ul:first-child li:nth-child(5n){
-    background-color: #4d4f4f;
-  }*/
-  /*article ul:first-child li:nth-child(n){
-    color: #04c478;
-  }
-  article ul:first-child li:nth-child(2n){
-    color: #0474c8;
-  }
-  article ul:first-child li:nth-child(3n){
-    color: #e65097;
-  }
-  article ul:first-child li:nth-child(4n){
-    color: #ff7800;
-  }
-  article ul:first-child li:nth-child(5n){
-    color: #4d4f4f;
-  }*/
-
   .generalBtnWrap{
     text-align: center;
   }
@@ -805,7 +762,7 @@ export default {
     width: 60px;
     height: 60px;
     border-radius: 50%;
-    background-color: #41444a;
+    background-color: #4d4f4f;
     opacity: 0.6;
     position: absolute;
     top: 0;

@@ -57,6 +57,7 @@ export default {
   created (){
     this.out_html = marked(this.md_in)
     this.sameScroll()
+    console.log(this)
   },
   beforeRouteEnter(to,from,next){
     next(vm => {
@@ -101,7 +102,13 @@ export default {
         content: this.md_in
       })
       this.$http.post(baseUrl+'api/v1/article/',obj).then(
-        function(){
+        function(data){
+          const obj = {
+            id: data.body,
+            release_time: '刚刚',
+            title: this.title
+          }
+          this.$store.commit('addTitle',obj)
           this.$router.push('/')
         }
       )

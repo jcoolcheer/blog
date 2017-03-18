@@ -12,27 +12,21 @@
             <p>
               附上一句话吧
             </p>
-            <input type="text">
+            <input type="text" v-model.trim = 'content' max-length = '100'>
           </li>
           <li class='clearfix'>
             <p>
               今天心情怎样?
             </p>
             <ul class='clearfix'>
-              <li class='iconfont'>
-                &#xe64c
-              </li>
-              <li class='iconfont'>
-                &#xe630
-              </li>
-              <li class='iconfont'>
-                &#xe681
+              <li v-for = '( item, index) in emojiEmotions' @click = 'setEmotion(index,item.alias)' :class = '[ e === index ? "checked" : "" ]'>
+                <img :src="item.type" alt="">
               </li>
             </ul>
           </li>
         </ul>
         <p class='generalBtnWrap emotionBtn'>
-          <a href="javascript:;" class='generalBtn positiveBtn'>
+          <a href="javascript:;" class='generalBtn positiveBtn' @click = 'postEmotion'>
             SUBMIT
           </a>
           <a href="javascript:;" class='generalBtn negativeBtn' @click = 'showPanel = false'>
@@ -43,39 +37,25 @@
     </transition>
     <div class = "emotionWraper" >
       <div class='emotionContent'>
+        <p class='emotionImg'>
+          <img src="http://tva3.sinaimg.cn/crop.0.0.748.748.180/6b111555jw8f1wsw89wrkj20ks0ksgmw.jpg" alt="" class='shadow'>
+        </p>
         <div class='showZone'>
           <ul class='emotionList'>
-            <li class='clearfix'>
-              <div>
+            <li class='clearfix' v-for = 'item in emotions' :class = '[ item.emotion === 3 ? "angry" : "",item.emotion === 2 ? "blushing" : "" , item.emotion === 1 ? "happy" : "" , item.emotion === 0 ? "laughing" : "" , item.emotion === -1 ? "crying" : "" ]'>
+              <div class = 'shadow'>
                 <p>
-                外边距合并的出现场景以及如何不让相邻元素外边距合
+                {{ item.content }}
+                <img :src="angry" alt="" v-if = 'item.emotion === 3'>
+                <img :src="blushing" alt="" v-if = 'item.emotion === 2'>
+                <img :src="happy" alt="" v-if = 'item.emotion === 1'>
+                <img :src="laughing" alt="" v-if = 'item.emotion === 0'>
+                <img :src="crying" alt="" v-if = 'item.emotion === -1'>
               </p>
               <p class='time'>
-                2016-12-01
+                {{ item.release_time }}
               </p>
-              <i class='iconfont'>
-                &#xe681
-              </i>
-              </div>
-            </li>
-            <li class='clearfix'>
-              <div>
-                <p>
-                外边距合并的出现场景以及如何不让相邻元素外边距合
-              </p>
-              <p class='time'>
-                2016-12-01
-              </p>
-              </div>
-            </li>
-            <li class='clearfix'>
-              <div>
-                <p>
-                  外边距合并的出现场景以及如何不让相邻元素外边距合
-                </p>
-                <p class='time'>
-                  2016-12-01
-                </p>
+
               </div>
             </li>
           </ul>
@@ -93,16 +73,86 @@
 </template>
 
 <script>
+import angry from '../assets/emoji/angry-face.jpg'
+import blushing from '../assets/emoji/blushing-emoji-clipart.jpg'
+import happy from '../assets/emoji/emoji-happy-.jpg'
+import laughing from '../assets/emoji/laughing-emoji-clipart.jpg'
+import crying from '../assets/emoji/loudly-crying-face.jpg'
+import { baseUrl } from '../baseUrl'
 export default {
+  created () {
+    this.getEmotions()
+  },
   data (){
     return {
-      showPanel: true
+      imgBac: this.$store.state.info.head_img,
+      content: '',
+      showPanel: false,
+      angry,
+      blushing,
+      happy,
+      laughing,
+      crying,
+      emojiEmotions: [{ type: angry, alias: 3 },{ type: blushing, alias: 2 },{ type: happy, alias: 1 },{ type: laughing, alias: 0},{ type: crying, alias: -1}],
+      e: -1,// e means emotion,
+      checkedEmotion: -2,
+      emotions: []
+    }
+  },
+  methods: {
+    setEmotion: function(index,emotion){
+      this.e = index
+      this.checkedEmotion = emotion
+    },
+    getEmotions: function(){
+      this.$http.get(baseUrl+'api/v1/tip/').then(
+        function(data){
+          this.emotions = typeof(data.body) === 'string' ? JSON.parse(data.body) : data.body
+        },
+        function(err){
+          //
+        }
+      )
+    },
+    postEmotion: function(){
+      const config = JSON.stringify({
+        content: this.content,
+        emotion: this.checkedEmotion
+      })
+      this.$http.post(baseUrl+'api/v1/tip/',config).then(
+        function(data){
+          const newEmotion = {
+            content: this.content,
+            id: data.body-0,
+            release_time: '刚刚',
+            emotion: this.checkedEmotion
+          }
+          this.emotions.unshift(newEmotion)
+          this.showPanel = false
+        },
+        function(err){
+          this.reset()
+        }
+      )
+    },
+    reset: function(){
+      this.checkedEmotion = -2
+      this.e  = -1
+      this.content = ''
+    }
+  },
+  watch: {
+    'showPanel': function(n,o){
+      !n && this.reset()
     }
   }
 }
 </script>
 
 <style lang="css">
+  .shadow{
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.33);
+  }
   .emotion>.bg{
     position: fixed;
     top: -80px;
@@ -142,42 +192,56 @@ export default {
     height: 100%;
     z-index: 99;
   }
+
   .emotionWraper.blur{
     filter: blur(50px);
   }
   .emotionContent{
     display: table-cell;
     vertical-align: middle;
+    padding: 50px 0;
   }
   .showZone{
     position: relative;
     width: 800px;
-    margin: 0 auto;
+    margin: 25px auto;
+    margin-bottom: 15px;
     z-index: 999;
     text-align: center;
+  }
+  .emotionImg{
+    text-align: center;
+  }
+  .emotionImg>img{
+    width: 100px;
+    border-radius: 50%;
+    border: 3px solid #fff;
   }
   .emotionList{
     color: #fff;
     display: inline-block;
     width: 800px;
+    max-height: 60vh;
+    overflow: auto;
     text-align: left;
     position: relative;
   }
-  .emotionList::before{
-    content: '';
-    display: block;
-    width: 5px;
-    height: 100%;
-    border-radius: 15px;
-    background-color: #eee;
-    opacity: 0.5;
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    top: -20px;
-  }
+
   .emotionList li{
     margin-bottom: 20px;
+    position: relative;
+  }
+  .emotionList li::before{
+    content: '';
+    display: block;
+    position: absolute;
+    width: 2px;
+    height: calc( 100% + 20px );
+    background-color: #eee;
+    opacity: 0.3;
+    left: 50%;
+    top: 0%;
+    transform: translateX(-50%);
   }
   .emotionList li>div{
     background-color: #fff;
@@ -186,32 +250,68 @@ export default {
     color: #4d4f4f;
     padding: 10px;
     position: relative;
+    color: #fff;
   }
+
   .emotionList li:nth-child(even)>div{
     float: left;
     text-align: right;
   }
-  .emotionList li:nth-child(odd)>div{    
+  .emotionList li:nth-child(odd)>div{
     float: right;
   }
   .emotionList li>div::before{
     content: '';
     display: block;
     position: absolute;
-    width: 30px;
-    height: 30px;
+    width: 18px;
+    height: 18px;
     line-height: 30px;
     text-align: center;
-    background-color: #fff;
+    background-color: #0dd874;
     border-radius: 50%;
     font-size: 22px;
     top: 0;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.33);
   }
-  .emotionList li:nth-child(odd)>div::before{
-    left: -55px;
+  .emotionList li.angry>div::before{
+    background-color: #ff403a;
   }
-  .emotionList li:nth-child(even)>div::before{
-    right: -55px;
+  .emotionList li.blushing>div::before{
+    background-color: #e8e363;
+  }
+  .emotionList li.crying div::before{
+    background-color: #0175be;
+  }
+  .emotionList li.laughing div::before{
+    background-color: #9966cc;
+  }
+  .emotionList li.happy div::before{
+    background-color: #c7ffec;
+  }
+
+
+
+  .emotionList li.angry>div{
+    background-color: #ff403a;
+  }
+  .emotionList li.blushing>div{
+    background-color: #e8e363;
+  }
+  .emotionList li.crying div{
+    background-color: #0175be;
+  }
+  .emotionList li.laughing div{
+    background-color: #9966cc;
+  }
+  .emotionList li.happy div{
+    background-color: #c7ffec;
+  }
+  .emotionList li:nth-child(odd)>div::before,.emotionList li:nth-child(odd)>div>img{
+    left: -49px;
+  }
+  .emotionList li:nth-child(even)>div::before,.emotionList li:nth-child(even)>div>img{
+    right: -49px;
   }
   .emotionList li>div::after{
     content: '';
@@ -229,7 +329,18 @@ export default {
     right: -12px;
     border-color: transparent transparent transparent #fff;
   }
-
+  .emotionList li p{
+    font-size: 15px;
+  }
+  .emotionList li p:first-child{
+    line-height: 30px;
+  }
+  .emotionList li p img{
+    width: 28px;
+    border-radius: 50%;
+    vertical-align: middle;
+    display: none;
+  }
   .emotionList li p.time{
     margin-top: 10px;
     font-size: 13px;
@@ -324,6 +435,16 @@ export default {
     margin-right: 50px;
     font-size: 25px;
     cursor: pointer;
+  }
+  .emotionConfig ul li img{
+    width: 30px;
+    opacity: 0.5;
+  }
+  .emotionConfig ul li.checked img{
+    opacity: 1;
+  }
+  .emotionConfig ul li:hover img{
+    opacity: 1;
   }
   .generalBtnWrap.emotionBtn{
     display: block;

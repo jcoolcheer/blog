@@ -108,6 +108,8 @@ export default {
       })
       this.$http.patch(baseUrl+'api/v1/article/'+this.pID,obj).then(
         function(){
+          this.sayit()
+          this.$router.push('/')
         }
       )
     },
@@ -120,6 +122,11 @@ export default {
         }
       })
     },
+    sayit: function(){
+      this.$store.commit('addTitle',{ title: '哈哈哈哈',id: 5 })
+      // this.$store.commit('addPost',{a:1})
+      // console.log(this.$store.state.posts)
+    }
   },
   watch: {
     'md_in': function (){

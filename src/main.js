@@ -3,6 +3,7 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
+import store from './vuex'
 import './assets/css/tiy_logo/iconfont.css'
 Vue.config.productionTip = false
 
@@ -19,6 +20,7 @@ Vue.directive('highlight', function (el) {
 new Vue({
   el: '#app',
   router,
+  store,
   template: '<App/>',
   components: { App }
 })
