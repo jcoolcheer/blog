@@ -1,7 +1,7 @@
 <template lang="html">
 
   <div class="fixedBg emotion" >
-    <div class='bg'>
+    <div class='bg' :style = '{ backgroundImage: "url("+bgGIF+")" }'>
     </div>
     <div class='fixedBg black' v-if = 'showPanel' @click = 'showPanel = false'>
     </div>
@@ -38,7 +38,7 @@
     <div class = "emotionWraper" >
       <div class='emotionContent'>
         <p class='emotionImg'>
-          <img src="http://tva3.sinaimg.cn/crop.0.0.748.748.180/6b111555jw8f1wsw89wrkj20ks0ksgmw.jpg" alt="" class='shadow'>
+          <router-link tag='img' src="http://tva3.sinaimg.cn/crop.0.0.748.748.180/6b111555jw8f1wsw89wrkj20ks0ksgmw.jpg" alt="" class='shadow' to = '/' />
         </p>
         <div class='showZone'>
           <ul class='emotionList'>
@@ -46,16 +46,13 @@
               <div class = 'shadow'>
                 <p>
                 {{ item.content }}
-                <img :src="angry" alt="" v-if = 'item.emotion === 3'>
-                <img :src="blushing" alt="" v-if = 'item.emotion === 2'>
-                <img :src="happy" alt="" v-if = 'item.emotion === 1'>
-                <img :src="laughing" alt="" v-if = 'item.emotion === 0'>
-                <img :src="crying" alt="" v-if = 'item.emotion === -1'>
               </p>
               <p class='time'>
                 {{ item.release_time }}
+                <i class = 'iconfont deleteEmotion' title= '删除' @click.stop = 'deleteEmotion(index,item.id)'>
+                  &#xe63c
+                </i>
               </p>
-
               </div>
             </li>
           </ul>
@@ -74,18 +71,24 @@
 
 <script>
 import angry from '../assets/emoji/angry-face.jpg'
+import angryG from '../assets/emotionimg/thunder.gif'
 import blushing from '../assets/emoji/blushing-emoji-clipart.jpg'
+import blushingG from '../assets/emotionimg/cloudy.gif'
 import happy from '../assets/emoji/emoji-happy-.jpg'
+import happyG from '../assets/emotionimg/sun.gif'
 import laughing from '../assets/emoji/laughing-emoji-clipart.jpg'
+import laughingG from '../assets/emotionimg/jiguang.gif'
 import crying from '../assets/emoji/loudly-crying-face.jpg'
+import cryingG from '../assets/emotionimg/rain2.gif'
+import defaultG from '../assets/emotionimg/defaultzee.gif'
 import { baseUrl } from '../baseUrl'
 export default {
   created () {
     this.getEmotions()
+
   },
   data (){
     return {
-      imgBac: this.$store.state.info.head_img,
       content: '',
       showPanel: false,
       angry,
@@ -93,10 +96,17 @@ export default {
       happy,
       laughing,
       crying,
+      angryG,
+      blushingG,
+      happyG,
+      laughingG,
+      cryingG,
+      defaultG,
+      bgGIF: defaultG,
       emojiEmotions: [{ type: angry, alias: 3 },{ type: blushing, alias: 2 },{ type: happy, alias: 1 },{ type: laughing, alias: 0},{ type: crying, alias: -1}],
       e: -1,// e means emotion,
       checkedEmotion: -2,
-      emotions: []
+      emotions: [],
     }
   },
   methods: {
@@ -108,6 +118,7 @@ export default {
       this.$http.get(baseUrl+'api/v1/tip/').then(
         function(data){
           this.emotions = typeof(data.body) === 'string' ? JSON.parse(data.body) : data.body
+          this.setGIF()
         },
         function(err){
           //
@@ -135,6 +146,35 @@ export default {
         }
       )
     },
+    setGIF: function(){
+      const bgINDEX = this.emotions[0].emotion
+      switch (bgINDEX){
+        case -1:
+        this.bgGIF = this.cryingG
+        break;
+        case 0:
+        this.bgGIF = this.laughingG
+        break;
+        case 1:
+        this.bgGIF = this.happyG
+        break;
+        case 2:
+        this.bgGIF = this.blushingG
+        break;
+        case 3:
+        this.bgGIF = this.angryG
+        break;
+        default:
+        this.bgGIF = this.defaultG
+      }
+    },
+    deleteEmotion: function(index,id){
+      this.$http.delete(baseUrl+'api/v1/tip/'+id).then(
+        function(){
+          this.emotions.splice(index,1)
+        }
+      )
+    },
     reset: function(){
       this.checkedEmotion = -2
       this.e  = -1
@@ -144,6 +184,12 @@ export default {
   watch: {
     'showPanel': function(n,o){
       !n && this.reset()
+    },
+    'emotions': {
+      handler: function(){
+        this.setGIF()
+      },
+      deep: true
     }
   }
 }
@@ -160,11 +206,11 @@ export default {
     right: -80px;
     bottom: -80px;
     z-index: 10;
-    background-size: cover;
     background-position: center;
+    background-size: cover;
     background-repeat: no-repeat;
-    filter: blur(50px);
-    background-image: url(http://tva3.sinaimg.cn/crop.0.0.748.748.180/6b111555jw8f1wsw89wrkj20ks0ksgmw.jpg);
+    filter: blur(10px);
+    transition: all 0.3s;
   }
   .fixedBg.black{
     position: fixed;
@@ -216,6 +262,7 @@ export default {
     width: 100px;
     border-radius: 50%;
     border: 3px solid #fff;
+    cursor: pointer;
   }
   .emotionList{
     color: #fff;
@@ -244,15 +291,13 @@ export default {
     transform: translateX(-50%);
   }
   .emotionList li>div{
-    background-color: #fff;
+    background-color: rgba(255,255,255,0.5);
     width: 45%;
     border-radius: 3px;
     color: #4d4f4f;
     padding: 10px;
     position: relative;
-    color: #fff;
   }
-
   .emotionList li:nth-child(even)>div{
     float: left;
     text-align: right;
@@ -268,7 +313,7 @@ export default {
     height: 18px;
     line-height: 30px;
     text-align: center;
-    background-color: #0dd874;
+    background-color: #888;
     border-radius: 50%;
     font-size: 22px;
     top: 0;
@@ -289,24 +334,6 @@ export default {
   .emotionList li.happy div::before{
     background-color: #c7ffec;
   }
-
-
-
-  .emotionList li.angry>div{
-    background-color: #ff403a;
-  }
-  .emotionList li.blushing>div{
-    background-color: #e8e363;
-  }
-  .emotionList li.crying div{
-    background-color: #0175be;
-  }
-  .emotionList li.laughing div{
-    background-color: #9966cc;
-  }
-  .emotionList li.happy div{
-    background-color: #c7ffec;
-  }
   .emotionList li:nth-child(odd)>div::before,.emotionList li:nth-child(odd)>div>img{
     left: -49px;
   }
@@ -323,11 +350,11 @@ export default {
   }
   .emotionList li:nth-child(odd)>div::after{
     left: -12px;
-    border-color: transparent #fff transparent transparent;
+    border-color: transparent rgba(255,255,255,0.5) transparent transparent;
   }
   .emotionList li:nth-child(even)>div::after{
     right: -12px;
-    border-color: transparent transparent transparent #fff;
+    border-color: transparent transparent transparent rgba(255,255,255,0.5);
   }
   .emotionList li p{
     font-size: 15px;
@@ -336,16 +363,25 @@ export default {
     line-height: 30px;
   }
   .emotionList li p img{
-    width: 28px;
-    border-radius: 50%;
-    vertical-align: middle;
-    display: none;
+    max-height: 50px;
+  }
+  .emotionList li:nth-child(odd) p img{
+    float: right;
+  }
+  .emotionList li:nth-child(even) p img{
+    float: left;
   }
   .emotionList li p.time{
     margin-top: 10px;
     font-size: 13px;
-    color: #4d4f4f;
-    opacity: 0.6;
+    color: #888;
+  }
+  .emotionList li p.time>i{
+    margin-left: 10px;
+    cursor: pointer;
+  }
+  .emotionList li p.time>i:hover{
+    color: #f44336;
   }
   p.addEmotion{
     text-align: center;
