@@ -38,7 +38,7 @@
                 <div class="double-bounce2"></div>
               </div>
             </li>
-            <li v-if='titles.length && !loadingList'  v-for = '(item,index) in titles' @click ='inPost(index,item)' :class='[ index === i ? "des" : "" ,"list-complete-item"]' :key = 'item'>
+            <li v-if='titles.length && !loadingList'  v-for = '(item,index) in titles' @click ='inPost(index,item)' :class='[ index === i ? "des" : "" ,"list-complete-item",item.newPost ? "new" : ""]' :key = 'item'>
               <h4>
               <a href="javascript:;">
                  {{ item.title }}
@@ -84,11 +84,11 @@
                       </span>
                     </span>
                     <span>
-                      <i class="iconfont info">
+                      <i class="iconfont info" @click = 'likethis'>
                         &#xe669
                       </i>
                       <span class="count info">
-                        0
+                        {{ likes }}
                       </span>
                     </span>
                   </p>
@@ -165,6 +165,7 @@ export default {
       toDelete: true,
       loadingList: true,
       tempBlank: false,
+      likes: 0,
       gif
     }
   },
@@ -212,7 +213,12 @@ export default {
       this.loadingList = true
       this.$http.get(baseUrl+'api/v1/title/'+id).then(
         function(data){
-          this.titles = data.body
+          this.titles = typeof(data.body) === 'string' ? JSON.parse(data.body) : data.body
+          this.loadingList = false
+          this.i = -1
+        },
+        function(){
+          this.titles = []
           this.loadingList = false
           this.i = -1
         }
@@ -238,6 +244,7 @@ export default {
       this.rawHtml = ''
     },
     inPost: function(i,item){
+      item.newPost && delete item.newPost
       this.i = i
       this.toDelete = true
       this.pID = item.id
@@ -251,10 +258,18 @@ export default {
           this.desPost = data.body
           this.imgSrc = this.desPost.icon
           this.title = this.desPost.title
+          this.likes = this.desPost.like
           this.rawHtml = marked(this.desPost.content)
         }
       )
     },
+    likethis: function(){
+      this.$http.patch(baseUrl+'api/v1/article/'+this.pID,JSON.stringify({ like: this.likes+1 })).then(
+        function(){
+          this.likes += 1
+        }
+      )
+    }
   },
   watch: {
     'toDelete': function(n,o){
@@ -509,6 +524,34 @@ export default {
     border-radius: 3px;
     cursor: pointer;
     position: relative;
+    transition: all 0.3s;
+    transform: translateX(0);
+  }
+  .posts_list li:hover{
+    transform: translateX(-10px);
+  }
+  .posts_list li::after{
+    content: '';
+    display: block;
+    position: absolute;
+    width: 0;
+    height: 0;
+    top: 50%;
+    right: 40px;
+    border-radius: 50%;
+    transform: translateY(-50%);
+    transition: all 0.2s;
+  }
+  .posts_list li.des::after,.posts_list li.new::after{
+    width: 10px;
+    height: 10px;
+  }
+  .posts_list li.des::after{
+    background-color: #4d4d4f;
+  }
+
+  .posts_list li.new::after{
+    background-color: #7bbfea;
   }
   .posts_list li.loadingList{
     border-bottom: none;
@@ -672,7 +715,12 @@ export default {
     margin-bottom: 20px;
     line-height: 1.8;
   }
-  article img:first-child{
+  article img{
+    display: block;
+    width: 80%;
+    margin: 20px 0;
+  }
+  article p:first-of-type img{
     display: none;
   }
   article ul:first-child{

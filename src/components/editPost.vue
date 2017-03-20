@@ -33,10 +33,10 @@
       </header>
       <div class="show_content">
         <section class='content inner_md'>
-          <textarea v-model = 'md_in' resize='none' placeholder="输入文章内容..." ref ='mdIn'>
+          <textarea v-model = 'md_in' resize='none' placeholder="输入文章内容..." ref ='mdIN'>
           </textarea>
         </section>
-        <section class='content out_html' v-html = 'out_html' v-highlight >
+        <section class='content out_html' v-html = 'out_html' v-highlight ref = 'outHTML'>
         </section>
       </div>
     </div>
@@ -67,7 +67,8 @@ export default {
       color: '',
       showConfirm: false,
       is_new: true,
-      pID: this.$route.params.pID
+      pID: this.$route.params.pID,
+      clock: null
     }
   },
   components:{
@@ -108,25 +109,23 @@ export default {
       })
       this.$http.patch(baseUrl+'api/v1/article/'+this.pID,obj).then(
         function(){
-          this.sayit()
           this.$router.push('/')
         }
       )
     },
     sameScroll: function(){
-      let kkk
+      let vm = this,
+          md_in
       this.$nextTick(function(){
-        const kkk = this.$refs.mdIn
-        kkk.onscroll = function(){
-
+        const md_in= this.$refs.mdIN
+        md_in.onscroll = function(){
+          vm.clock && clearTimeout(vm.clock)
+          vm.clock = setTimeout(function(){
+            vm.$refs.outHTML.scrollTop = md_in.scrollTop
+          },100)
         }
       })
     },
-    sayit: function(){
-      this.$store.commit('addTitle',{ title: '哈哈哈哈',id: 5 })
-      // this.$store.commit('addPost',{a:1})
-      // console.log(this.$store.state.posts)
-    }
   },
   watch: {
     'md_in': function (){

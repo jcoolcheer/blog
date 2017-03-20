@@ -38,11 +38,24 @@
     <div class = "emotionWraper" >
       <div class='emotionContent'>
         <p class='emotionImg'>
-          <router-link tag='img' src="http://tva3.sinaimg.cn/crop.0.0.748.748.180/6b111555jw8f1wsw89wrkj20ks0ksgmw.jpg" alt="" class='shadow' to = '/' />
+          <router-link tag='img' src="http://tva3.sinaimg.cn/crop.0.0.748.748.180/6b111555jw8f1wsw89wrkj20ks0ksgmw.jpg" alt="" class='shadow' to = '/' title = '返回主页'/>
         </p>
         <div class='showZone'>
           <ul class='emotionList'>
-            <li class='clearfix' v-for = 'item in emotions' :class = '[ item.emotion === 3 ? "angry" : "",item.emotion === 2 ? "blushing" : "" , item.emotion === 1 ? "happy" : "" , item.emotion === 0 ? "laughing" : "" , item.emotion === -1 ? "crying" : "" ]'>
+            <li class='clearfix happy' v-if = '!emotions.length'>
+              <div class = 'shadow' >
+                <p>
+                难道这就是青春吗？
+              </p>
+              <p class='time'>
+                 嘻嘻嘻嘻嘻
+                <i class = 'iconfont deleteEmotion' title= '删除' @click.stop = 'deleteEmotion(index,item.id)'>
+                  &#xe63c`
+                </i>
+              </p>
+              </div>
+            </li>
+            <li class='clearfix' v-if = 'emotions.length' v-for = 'item in emotions' :class = '[ item.emotion === 3 ? "angry" : "",item.emotion === 2 ? "blushing" : "" , item.emotion === 1 ? "happy" : "" , item.emotion === 0 ? "laughing" : "" , item.emotion === -1 ? "crying" : "" ]'>
               <div class = 'shadow'>
                 <p>
                 {{ item.content }}
@@ -50,7 +63,7 @@
               <p class='time'>
                 {{ item.release_time }}
                 <i class = 'iconfont deleteEmotion' title= '删除' @click.stop = 'deleteEmotion(index,item.id)'>
-                  &#xe63c
+                  &#xe63c`
                 </i>
               </p>
               </div>
@@ -147,7 +160,7 @@ export default {
       )
     },
     setGIF: function(){
-      const bgINDEX = this.emotions[0].emotion
+      const bgINDEX = this.emotions[0] && this.emotions[0].emotion
       switch (bgINDEX){
         case -1:
         this.bgGIF = this.cryingG
@@ -391,6 +404,7 @@ export default {
     padding: 5px 10px;
     color: #fff;
   }
+
   p.addEmotion>a>i{
     font-size: 30px;
     color: #eee;
