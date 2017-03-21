@@ -55,7 +55,7 @@
               </p>
               </div>
             </li>
-            <li class='clearfix' v-if = 'emotions.length' v-for = 'item in emotions' :class = '[ item.emotion === 3 ? "angry" : "",item.emotion === 2 ? "blushing" : "" , item.emotion === 1 ? "happy" : "" , item.emotion === 0 ? "laughing" : "" , item.emotion === -1 ? "crying" : "" ]'>
+            <li class='clearfix' v-if = 'emotions.length' v-for = '(item,index) in emotions' :class = '[ item.emotion === 3 ? "angry" : "",item.emotion === 2 ? "blushing" : "" , item.emotion === 1 ? "happy" : "" , item.emotion === 0 ? "laughing" : "" , item.emotion === -1 ? "crying" : "" ]'>
               <div class = 'shadow'>
                 <p>
                 {{ item.content }}

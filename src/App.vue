@@ -84,7 +84,7 @@
                       </span>
                     </span>
                     <span>
-                      <i class="iconfont info" @click = 'likethis'>
+                      <i class="iconfont info" @click = 'likethis' :class='[liked ? "liked" : ""]'>
                         &#xe669
                       </i>
                       <span class="count info">
@@ -166,6 +166,7 @@ export default {
       loadingList: true,
       tempBlank: false,
       likes: 0,
+      liked: false,
       gif
     }
   },
@@ -188,13 +189,16 @@ export default {
     requesTitles: function(){
       this.$http.get(baseUrl+'api/v1/title/').then(
         function(data){
-          const titles = typeof(data.body) === 'string' ? JSON.parse(data.body) : data.body
-          this.$store.commit('addTitle',titles)
-          this.titles = this.$store.state.titles
+          this.computeTitles(data)
           this.loadingList = false
           this.titles.length && this.init()
         }
       )
+    },
+    computeTitles: function(data){
+      const titles = typeof(data.body) === 'string' ? JSON.parse(data.body) : data.body
+      this.$store.commit('addTitle',titles)
+      this.titles = this.$store.state.titles
     },
     init: function(){
       this.pID = this.titles[0].id
@@ -213,7 +217,7 @@ export default {
       this.loadingList = true
       this.$http.get(baseUrl+'api/v1/title/'+id).then(
         function(data){
-          this.titles = typeof(data.body) === 'string' ? JSON.parse(data.body) : data.body
+          this.computeTitles(data)
           this.loadingList = false
           this.i = -1
         },
@@ -246,10 +250,12 @@ export default {
     inPost: function(i,item){
       item.newPost && delete item.newPost
       this.i = i
+      this.liked = false
       this.toDelete = true
       this.pID = item.id
       history.pushState({},'','/#/'+this.pID)
       this.showPost(i)
+      this.liked = localStorage.likes && JSON.parse(localStorage.likes)[this.pID]
     },
     showPost: function(){
       this.$http.get(baseUrl+'api/v1/article/'+this.pID).then(
@@ -260,13 +266,38 @@ export default {
           this.title = this.desPost.title
           this.likes = this.desPost.like
           this.rawHtml = marked(this.desPost.content)
+          this.liked = localStorage.likes && JSON.parse(localStorage.likes)[this.pID]
         }
       )
     },
     likethis: function(){
+      if(this.liked){
+        this.cancelLike()
+        return
+      }else{
+        this.addLike()
+      }
+
+    },
+    addLike: function(){
       this.$http.patch(baseUrl+'api/v1/article/'+this.pID,JSON.stringify({ like: this.likes+1 })).then(
         function(){
+          this.liked = true
           this.likes += 1
+          const liked =  localStorage.likes && JSON.parse(localStorage.likes) || {}
+          liked[this.pID] = true
+          localStorage.likes = JSON.stringify(liked)
+        }
+      )
+    },
+    cancelLike: function(){
+      this.$http.patch(baseUrl+'api/v1/article/'+this.pID,JSON.stringify({ like: this.likes-1 })).then(
+        function(){
+          this.liked = false
+          this.likes -= 1
+          const liked =  localStorage.likes && JSON.parse(localStorage.likes) || {}
+          delete liked[this.pID]
+          localStorage.likes = JSON.stringify(liked)
         }
       )
     }
@@ -671,7 +702,6 @@ export default {
     height: 80px;
     padding: 0 30px;
     line-height: 80px;
-
   }
   .likes>p>span{
     margin: 0 20px;
@@ -686,6 +716,10 @@ export default {
   .iconfont.info{
     font-size: 20px;
     margin-right: 5px;
+    transition: all 0.15s;
+  }
+  .iconfont.liked{
+    color: #fd5b78
   }
   .count.info{
     color: #fff;
