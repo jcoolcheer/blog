@@ -55,8 +55,8 @@
               </p>
               </div>
             </li>
-            <li class='clearfix' v-if = 'emotions.length' v-for = '(item,index) in emotions' :class = '[ item.emotion === 3 ? "angry" : "",item.emotion === 2 ? "blushing" : "" , item.emotion === 1 ? "happy" : "" , item.emotion === 0 ? "laughing" : "" , item.emotion === -1 ? "crying" : "" ]'>
-              <div class = 'shadow'>
+            <li class='clearfix' v-if = 'emotions.length' v-for = '(item,index) in emotions' :class = '[ item.emotion === 3 ? "angry" : "",item.emotion === 2 ? "blushing" : "" , item.emotion === 1 ? "happy" : "" , item.emotion === 0 ? "laughing" : "" , item.emotion === -1 ? "crying" : "" ]' >
+              <div class = 'shadow' @mouseover = 'setBG(item.emotion)'>
                 <p>
                 {{ item.content }}
               </p>
@@ -161,7 +161,23 @@ export default {
     },
     setGIF: function(){
       const bgINDEX = this.emotions[0] && this.emotions[0].emotion
-      switch (bgINDEX){
+      this.setBG(bgINDEX)
+    },
+    deleteEmotion: function(index,id){
+      this.$http.delete(baseUrl+'api/v1/tip/'+id).then(
+        function(){
+          this.emotions.splice(index,1)
+        }
+      )
+    },
+    reset: function(){
+      this.checkedEmotion = -2
+      this.e  = -1
+      this.content = ''
+    },
+    setBG:function(e){
+      console.log(e)
+      switch (e){
         case -1:
         this.bgGIF = this.cryingG
         break;
@@ -180,18 +196,6 @@ export default {
         default:
         this.bgGIF = this.defaultG
       }
-    },
-    deleteEmotion: function(index,id){
-      this.$http.delete(baseUrl+'api/v1/tip/'+id).then(
-        function(){
-          this.emotions.splice(index,1)
-        }
-      )
-    },
-    reset: function(){
-      this.checkedEmotion = -2
-      this.e  = -1
-      this.content = ''
     }
   },
   watch: {

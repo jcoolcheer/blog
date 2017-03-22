@@ -13,6 +13,9 @@ const vuexa = new Vuex.Store({
       } else {
         state.titles.unshift(title)
       }
+    },
+    clearTitle: (state) => {
+      state.titles = []
     }
   }
 })

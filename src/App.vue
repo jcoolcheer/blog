@@ -197,6 +197,7 @@ export default {
     },
     computeTitles: function(data){
       const titles = typeof(data.body) === 'string' ? JSON.parse(data.body) : data.body
+      this.$store.commit('clearTitle')
       this.$store.commit('addTitle',titles)
       this.titles = this.$store.state.titles
     },
