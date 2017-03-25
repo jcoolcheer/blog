@@ -26,6 +26,9 @@
 
 <script>
 export default {
+  props: {
+    test: String
+  }
 }
 </script>
 

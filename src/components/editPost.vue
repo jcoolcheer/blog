@@ -2,7 +2,7 @@
   <div class="newPost" :style='{backgroundColor: color}' @click.stop = 'showConfirm = false'>
 
     <modal v-if ='showConfirm'>
-      <confirmPanel @click.stop slot = 'modalContent'>
+      <confirmPanel @click.stop slot = 'modalContent' :test = 'datas'>
         <h3 slot ='confirmTitle'>
           是否保存草稿？
         </h3>
@@ -68,7 +68,8 @@ export default {
       showConfirm: false,
       is_new: true,
       pID: this.$route.params.pID,
-      clock: null
+      clock: null,
+      datas: '急急急'
     }
   },
   components:{
