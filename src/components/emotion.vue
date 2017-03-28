@@ -98,7 +98,6 @@ import { baseUrl } from '../baseUrl'
 export default {
   created () {
     this.getEmotions()
-
   },
   data (){
     return {
@@ -176,7 +175,6 @@ export default {
       this.content = ''
     },
     setBG:function(e){
-      console.log(e)
       switch (e){
         case -1:
         this.bgGIF = this.cryingG
@@ -314,6 +312,8 @@ export default {
     color: #4d4f4f;
     padding: 10px;
     position: relative;
+    transition: all 0.2s;
+    cursor: pointer;
   }
   .emotionList li:nth-child(even)>div{
     float: left;

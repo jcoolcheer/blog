@@ -312,11 +312,14 @@ export default {
 </script>
 
 <style lang = 'css'>
+  html{
+    font-size: 12px;
+  }
   html,body,div,p,ul,ol,li,p,h1,h2,h3,h4,h5,input,textarea{
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-
+    font-family: "Helvetica Neue",Helvetica,Arial,"Microsoft Yahei","Hiragino Sans GB","Heiti SC","WenQuanYi Micro Hei",'sans-serif';
   }
   html,body,.container,.blog_wraper{
     height: 100%;
@@ -438,21 +441,62 @@ export default {
     width: 50.12%;
     animation: showPost 0.3s;
   }
+  @media screen and (max-device-width: 1080px) {
+    html{
+      font-size: 25px;
+    }
+    .info_side{
+      height: 33vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    div.user_headimg{
+      width: 8rem;
+      height: 8rem;
+      margin-top: 0;
+      border: 0.3rem solid #858585;
+    }
+    .info_side,.list_side{
+      width: 100%;
+    }
+    .content_side{
+      display: none;
+    }
+    ul.tags{
+      display: none;
+    }
+    header.list{
+      display: none;
+    }
+    .side.list_side{
+      height: 67vh;
+    }
+    div.lists_zone{
+      height: 67vh;
+    }
+    ul.posts_list{
+      height: 100%;
+    }
+    .new_post{
+      display: none;
+    }
+
+  }
   header.info{
     text-align: center;
-    padding: 0 20px;
+    padding: 0 2.5rem;
   }
   .user_headimg{
-    width: 100px;
-    height: 100px;
+    width: 9rem;
+    height: 9rem;
     border-radius: 50%;
-    border: 4px solid #858585;
+    border: 0.4rem solid #858585;
     cursor: pointer;
     background-image: url(http://tva3.sinaimg.cn/crop.0.0.748.748.180/6b111555jw8f1wsw89wrkj20ks0ksgmw.jpg);
     background-size: cover;
     background-position: center;
-    margin: 40px auto;
-    margin-bottom: 10px;
+    margin: 2rem auto;
     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.33);
     position: relative;
     overflow: hidden;
@@ -463,7 +507,7 @@ export default {
     animation: remind 0.3s ease-out;
   }
   .blogger_name{
-    font-size: 20px;
+    font-size: 1.5rem;
     color: #efefef;
     background-color: transparent;
     border: none;
@@ -472,8 +516,8 @@ export default {
     width: 100%;
   }
   p.sigEmotion{
-    font-size: 14px;
-    line-height: 40px;
+    font-size: 0.8rem;
+    line-height: 2rem;
     color: #aaa;
   }
   ul.tags{
@@ -504,8 +548,8 @@ export default {
     border-right: 1px solid #e5e5e6;
   }
   header.list{
-    height: 50px;
-    line-height: 50px;
+    height: 4.8rem;
+    line-height: 4.8rem;
     background-color: #f5f5f6;
     color: #4d4f4f;
   }
@@ -513,44 +557,36 @@ export default {
     float: left;
   }
   header.list>i{
-    width: 80px;
+    width: 6.5rem;
     text-align: center;
     display: block;
     height: 100%;
-    font-size: 20px;
+    font-size: 2rem;
     color: #888;
   }
   header.list>div{
-    margin-left: 80px;
+    margin-left: 6.5rem;
     padding: 0 10px;
   }
   input.search_blog_input{
     width: 100%;
-    height: 50px;
+    height: 100%;
     border: none;
     outline: none;
     background-color: #f5f5f6;
     color: #4d4f4f;
-    font-size: 14px;
+    font-size: 1.2rem;
   }
   .lists_zone{
-    padding: 10px 0;
-    height: calc(100% - 50px );
-  }
-  .lists_zone>p{
-    line-height: 50px;
-    margin-bottom: 20px;
-    font-weight: bold;
-    color: #4c556e;
-    display: none;
+    height: calc(100% - 4.8rem );
   }
   .posts_list{
-    padding-top: 20px;
-    height: calc( 100% - 90px );
+    padding-top: 1.6rem;
+    height: calc( 100% - 9rem );
     overflow: auto;
   }
   .posts_list li{
-    padding: 10px 50px;
+    padding: 0.9rem 4.2rem;
     margin: 10px 0;
     border-bottom: 1px solid #f5f5f6;
     border-radius: 3px;
@@ -560,7 +596,7 @@ export default {
     transform: translateX(0);
   }
   .posts_list li:hover{
-    transform: translateX(-10px);
+    transform: translateX(-0.9rem);
   }
   .posts_list li::after{
     content: '';
@@ -569,14 +605,14 @@ export default {
     width: 0;
     height: 0;
     top: 50%;
-    right: 40px;
+    right: 4rem;
     border-radius: 50%;
     transform: translateY(-50%);
     transition: all 0.2s;
   }
   .posts_list li.des::after,.posts_list li.new::after{
-    width: 10px;
-    height: 10px;
+    width: 0.9rem;
+    height: 0.9rem;
   }
   .posts_list li.des::after{
     background-color: #4d4d4f;
@@ -593,20 +629,20 @@ export default {
   }
 
   .posts_list li>h4{
-    font-size: 15px;
+    font-size: 1.25rem;
   }
   .posts_list li a{
     color: #4d4f4f;
   }
   .posts_list li>p{
-    font-size: 13px;
+    font-size: 1.1rem;
     line-height: 2;
     color: #888;
   }
   .new_post{
     width: 100%;
-    height: 90px;
-    line-height: 90px;
+    height: 8rem;
+    line-height: 8rem;
     background-color: #fff;
     text-align: center;
     position: relative;
@@ -628,10 +664,10 @@ export default {
   .new_post a{
     display: inline-block;
     width: 70%;
-    height: 50px;
-    line-height: 50px;
-    border-radius: 3px;
-    font-size: 13px;
+    height: 4rem;
+    line-height: 4rem;
+    border-radius: 0.25rem;
+    font-size: 1rem;
     font-weight: bold;
     background-color: rgba(143,160,164,0.8);
     color: #fff;
