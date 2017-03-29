@@ -211,20 +211,47 @@ export default {
 </script>
 
 <style lang="css">
+  @media screen and (max-device-width: 1080px){
+    .emotionContent .showZone{
+      width: 90vw;
+    }
+    .emotionContent .showZone>ul{
+      padding: 1rem;
+    }
+    .emotionList li.clearfix::before{
+      display: none;
+    }
+    .emotionList li.clearfix>div{
+      width: 95%;
+    }
+    .emotionList li.clearfix>div p:first-child{
+      font-size: 1.45rem;
+    }
+    .emotionList li.clearfix>div p.time{
+      text-align: right;
+    }
+    .emotionList li.clearfix>div::before{
+      display: none;
+    }
+    .emotionList li.clearfix:nth-child(2n) > div{
+      float: right;
+      text-align: left;
+    }
+  }
   .shadow{
     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.33);
   }
   .emotion>.bg{
     position: fixed;
-    top: -80px;
-    left: -80px;
-    right: -80px;
-    bottom: -80px;
+    top: -7rem;
+    left: -7rem;
+    right: -7rem;
+    bottom: -7rem;
     z-index: 10;
     background-position: center;
     background-size: cover;
     background-repeat: no-repeat;
-    filter: blur(10px);
+    filter: blur(0.83rem);
     transition: all 0.3s;
   }
   .fixedBg.black{
@@ -255,18 +282,18 @@ export default {
   }
 
   .emotionWraper.blur{
-    filter: blur(50px);
+    filter: blur(4.17rem);
   }
   .emotionContent{
     display: table-cell;
     vertical-align: middle;
-    padding: 50px 0;
+    padding: 4.17rem 0;
   }
   .showZone{
     position: relative;
-    width: 800px;
-    margin: 25px auto;
-    margin-bottom: 15px;
+    width: 50vw;
+    margin: 2rem auto;
+    margin-bottom: 1.25rem;
     z-index: 999;
     text-align: center;
   }
@@ -274,15 +301,15 @@ export default {
     text-align: center;
   }
   .emotionImg>img{
-    width: 100px;
+    width: 8rem;
     border-radius: 50%;
-    border: 3px solid #fff;
+    border: 0.25rem solid #fff;
     cursor: pointer;
   }
   .emotionList{
     color: #fff;
     display: inline-block;
-    width: 800px;
+    width: 100%;
     max-height: 60vh;
     overflow: auto;
     text-align: left;
@@ -290,15 +317,15 @@ export default {
   }
 
   .emotionList li{
-    margin-bottom: 20px;
+    margin-bottom: 1.67rem;
     position: relative;
   }
   .emotionList li::before{
     content: '';
     display: block;
     position: absolute;
-    width: 2px;
-    height: calc( 100% + 20px );
+    width: 0.2rem;
+    height: calc( 100% + 1.67rem );
     background-color: #eee;
     opacity: 0.3;
     left: 50%;
@@ -308,9 +335,9 @@ export default {
   .emotionList li>div{
     background-color: rgba(255,255,255,0.5);
     width: 45%;
-    border-radius: 3px;
+    border-radius: 0.25rem;
     color: #4d4f4f;
-    padding: 10px;
+    padding: 0.83rem;
     position: relative;
     transition: all 0.2s;
     cursor: pointer;
@@ -326,13 +353,13 @@ export default {
     content: '';
     display: block;
     position: absolute;
-    width: 18px;
-    height: 18px;
+    width: 1.5rem;
+    height: 1.5rem;
     line-height: 30px;
     text-align: center;
     background-color: #888;
     border-radius: 50%;
-    font-size: 22px;
+    font-size: 1.83rem;
     top: 0;
     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.33);
   }
@@ -351,36 +378,36 @@ export default {
   .emotionList li.happy div::before{
     background-color: #c7ffec;
   }
-  .emotionList li:nth-child(odd)>div::before,.emotionList li:nth-child(odd)>div>img{
-    left: -49px;
+  .emotionList li:nth-child(odd)>div::before{
+    left: -14%;
   }
-  .emotionList li:nth-child(even)>div::before,.emotionList li:nth-child(even)>div>img{
-    right: -49px;
+  .emotionList li:nth-child(even)>div::before{
+    right: -14%;
   }
   .emotionList li>div::after{
     content: '';
     display: block;
     position: absolute;
-    border-width: 6px;
+    border-width: 0.5rem;
     border-style: solid;
-    top: 8px;
+    top: 0.75rem;
   }
   .emotionList li:nth-child(odd)>div::after{
-    left: -12px;
+    left: -0.94rem;
     border-color: transparent rgba(255,255,255,0.5) transparent transparent;
   }
   .emotionList li:nth-child(even)>div::after{
-    right: -12px;
+    right: -0.94rem;
     border-color: transparent transparent transparent rgba(255,255,255,0.5);
   }
   .emotionList li p{
-    font-size: 15px;
+    font-size: 1.2rem;
   }
   .emotionList li p:first-child{
-    line-height: 30px;
+    line-height: 2.5rem;
   }
   .emotionList li p img{
-    max-height: 50px;
+    max-height: 4.17rem;
   }
   .emotionList li:nth-child(odd) p img{
     float: right;
@@ -389,12 +416,12 @@ export default {
     float: left;
   }
   .emotionList li p.time{
-    margin-top: 10px;
-    font-size: 13px;
+    margin-top: 0.83rem;
+    font-size: 1.08rem;
     color: #888;
   }
   .emotionList li p.time>i{
-    margin-left: 10px;
+    margin-left: 0.83rem;
     cursor: pointer;
   }
   .emotionList li p.time>i:hover{
@@ -405,12 +432,12 @@ export default {
   }
   p.addEmotion>a{
     display: inline-block;
-    padding: 5px 10px;
+    padding: 0.42rem 0.83rem;
     color: #fff;
   }
 
   p.addEmotion>a>i{
-    font-size: 30px;
+    font-size: 2.5rem;
     color: #eee;
   }
   p.addEmotion>a>i:hover{

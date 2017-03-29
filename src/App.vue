@@ -2,7 +2,7 @@
   <div class="container box" >
     <loading v-if='isLoading && !info'>
     </loading>
-    <div class='blog_wraper clearfix' v-if='info'>
+    <div class='blog_wraper clearfix' v-if='info' :class = '[inPostMode ? "inPost" : ""]'>
       <section class='side info_side box-shadow'>
         <header class='info'>
           <router-link class = 'img_bg user_headimg' tag = 'div' to='/emotion' >
@@ -159,6 +159,7 @@ export default {
       i: -1,
       rawHtml: '',
       imgSrc: '',
+      inPostMode: false, // item点击后移动端须展示内容页面，隐藏列表和info页面
       src: 'http://img1.vued.vanthink.cn/vued0a233185b6027244f9d43e653227439a.png',
       isLoading: true,
       deleteReminder: 'DELETE',
@@ -249,6 +250,7 @@ export default {
       this.rawHtml = ''
     },
     inPost: function(i,item){
+      this.inPostMode = true
       item.newPost && delete item.newPost
       this.i = i
       this.liked = false
@@ -463,6 +465,13 @@ export default {
     .content_side{
       display: none;
     }
+    .inPost .content_side{
+      display: block;
+      width: 100%;
+    }
+    .inPost .info_side,.inPost .list_side{
+      display: none;
+    }
     ul.tags{
       display: none;
     }
@@ -481,7 +490,9 @@ export default {
     .new_post{
       display: none;
     }
-
+    section.content_side:hover footer.generalBtnWrap.post{
+      display: none;
+    }
   }
   header.info{
     text-align: center;
@@ -725,7 +736,7 @@ export default {
   .blog_img{
     background-size: cover;
     background-position: center;
-    height: 220px;
+    height: 19rem;
     transition: all 0.2s;
   }
   header.blog:hover .blog_img{
@@ -733,15 +744,15 @@ export default {
   }
   .likes{
     color: #fff;
-    height: 50px;
+    height: 7rem;
   }
   .likes>p{
-    height: 80px;
-    padding: 0 30px;
-    line-height: 80px;
+    height: 7rem;
+    padding: 0 2.5rem;
+    line-height: 7rem;
   }
   .likes>p>span{
-    margin: 0 20px;
+    margin: 0 1.8rem;
     color: #ccc;
   }
   .likes>p>span>i{
@@ -751,8 +762,8 @@ export default {
     margin-left: 0;
   }
   .iconfont.info{
-    font-size: 20px;
-    margin-right: 5px;
+    font-size: 1.8rem;
+    margin-right: 0.34rem;
     transition: all 0.15s;
   }
   .iconfont.liked{
@@ -765,31 +776,31 @@ export default {
     float: right;
   }
   .editPost i{
-    font-size: 20px;
+    font-size: 1.8rem;
   }
   .title{
-    height: 170px;
-    padding: 0 30px;
+    height: 11rem;
+    padding: 0 2.5rem;
     display: flex;
   }
   .blog_title{
     align-self: flex-end;
     flex-grow: 1;
-    margin-bottom: 30px;
+    margin-bottom: 2.5rem;
     color: #fff;
   }
   article{
-    padding: 20px 30px;
-    font-size: 15px;
+    padding: 1.8rem 2.5rem;
+    font-size: 1.25rem;
   }
   article p{
-    margin-bottom: 20px;
+    margin-bottom: 1.8rem;
     line-height: 1.8;
   }
   article img{
     display: block;
     width: 80%;
-    margin: 20px 0;
+    margin: 1.8rem 0;
   }
   article p:first-of-type img{
     display: none;
@@ -800,10 +811,10 @@ export default {
 
   article ul:first-child li{
     display: inline-block;
-    padding: 3px 20px;
-    border-radius: 30px;
-    font-size: 13px;
-    margin: 0 10px 15px 0;
+    padding: 0.25rem 1.8rem;
+    border-radius: 2.5rem;
+    font-size: 1.05rem;
+    margin: 0 0.8rem 1.25rem 0;
     background-color: #f5f5f6;
     border: 1px solid #eee;
     opacity: 0.9;
@@ -830,14 +841,14 @@ export default {
   }
   .generalBtn{
     display: inline-block;
-    width: 200px;
-    height: 40px;
-    line-height: 40px;
+    width: 16.7rem;
+    height: 3.3rem;
+    line-height: 3.3rem;
     text-align: center;
-    margin: 0 20px;
+    margin: 0 1rem;
     color: #fff;
-    border-radius: 3px;
-    font-size: 13px;
+    border-radius: 0.25rem;
+    font-size: 1.08rem;
     cursor: pointer;
     transition: all 0.3s;
     box-shadow: none;
@@ -871,15 +882,15 @@ export default {
   }
 
   .spinner {
-    width: 60px;
-    height: 60px;
+    width: 5rem;
+    height: 5rem;
     position: relative;
-    margin: 30px auto;
+    margin: 2.5rem auto;
   }
 
   .double-bounce1, .double-bounce2 {
-    width: 60px;
-    height: 60px;
+    width: 5rem;
+    height: 5rem;
     border-radius: 50%;
     background-color: #4d4f4f;
     opacity: 0.6;
