@@ -225,7 +225,7 @@ export default {
       width: 95%;
     }
     .emotionList li.clearfix>div p:first-child{
-      font-size: 1.45rem;
+      font-size: 1.2rem;
     }
     .emotionList li.clearfix>div p.time{
       text-align: right;
@@ -401,7 +401,7 @@ export default {
     border-color: transparent transparent transparent rgba(255,255,255,0.5);
   }
   .emotionList li p{
-    font-size: 1.2rem;
+    font-size: 1.1rem;
   }
   .emotionList li p:first-child{
     line-height: 2.5rem;

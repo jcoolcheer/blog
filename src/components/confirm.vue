@@ -75,9 +75,9 @@ export default {
     font-weight: normal;
   }
   header>p{
-    font-size: 13px;
+    font-size: 1rem;
     color: #999;
-    margin: 10px 0;
+    margin: 0.8rem 0;
   }
   .confirmBtn{
     margin-top: 10px;

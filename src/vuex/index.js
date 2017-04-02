@@ -3,7 +3,6 @@ import Vuex from 'vuex'
 Vue.use(Vuex)
 const vuexa = new Vuex.Store({
   state: {
-    count: 0,
     titles: []
   },
   mutations: {
@@ -16,6 +15,9 @@ const vuexa = new Vuex.Store({
     },
     clearTitle: (state) => {
       state.titles = []
+    },
+    deleteTitle: (state, i) => {
+      state.titles.splice(i, 1)
     }
   }
 })
