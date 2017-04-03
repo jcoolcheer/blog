@@ -369,6 +369,9 @@ export default {
     .blog_wraper ul.tags.showT{
       display: block;
     }
+    .side header.info i.iconfont{
+      display: block;
+    }
     .blog_wraper ul.tags li{
       border-bottom: 1px solid #efefef;
     }
@@ -386,7 +389,7 @@ export default {
     position: relative;
   }
   header.info i.iconfont{
-    /*display: none;*/
+    display: none;
     position: absolute;
     color: #eee;
     left: 0;
